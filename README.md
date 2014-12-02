@@ -19,7 +19,7 @@ To get help use the -h argument.
 
 The minimum arguments are only --host or --host_file, you will be prompted for the other augments.
 
-     python3 asaos-snmpv3-tool.py --host_file=asa.hosts
+     python3 snmp_v3_tool.py --host_file=asa.hosts
 
 ==================================================
 
