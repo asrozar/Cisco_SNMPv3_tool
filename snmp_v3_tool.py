@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/local/bin/python3
 # -*- coding: utf-8 -*-
 """
-(C) Copyright [2014] Avery Rozar
+(C) Copyright [2014] InfoSec Consulting, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -47,9 +47,9 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser('--host --host_file --username --password --enable --group --snmp_user --snmp_host\
-    --snmp_contact --int_name --snmp_v3_auth --snmp_v3_hmac --snmp_v3_priv --snmp_v3_encr')
+    --snmp_contact --int_name --snmp_v3_auth --snmp_v3_priv --snmp_v3_encr')
     parser.add_argument('--host', dest='host', type=str, help='specify a target host')
-    parser.add_argument('--host_file', dest='hosts', type=file, help='specify a target host file')
+    parser.add_argument('--host_file', dest='hosts', type=argparse.FileType('r'), help='specify a target host file')
     parser.add_argument('--username', dest='user', type=str, help='specify a user name')
     parser.add_argument('--password', dest='passwd', type=str, help='specify a passwd')
     parser.add_argument('--enable', dest='en_passwd', type=str, help='specify an enable passwd')
@@ -59,7 +59,7 @@ def main():
     parser.add_argument('--snmp_contact', dest='snmpcontact', type=str, help='specify your snmp contact info')
     parser.add_argument('--int_name', dest='intname', type=str, help='specify interface name')
     parser.add_argument('--snmp_v3_auth', dest='snmpauth', type=str, help='specify the snmp user authentication')
-    parser.add_argument('--snmp_v3_hmac', dest='snmphmac', type=str, help='set snmp HMAC, md5 or sha')
+    #parser.add_argument('--snmp_v3_hmac', dest='snmphmac', type=str, help='set snmp HMAC, md5 or sha')
     parser.add_argument('--snmp_v3_priv', dest='snmppriv', type=str, help='specify the snmp priv password')
     parser.add_argument('--snmp_v3_encr', dest='snmpencrypt', type=str, help='specify encryption, des, 3des, \
     or aes(128/192/256)')
@@ -81,11 +81,11 @@ def main():
 
     if host is None and hosts is None:
         print('I need to know what host[s] to connect to')
-        print parser.usage
+        print(parser.usage)
         exit(0)
 
     if user is None:
-        user = raw_input('Enter your username: ')
+        user = input('Enter your username: ')
 
     if passwd is None:
         passwd = getpass.getpass(prompt='User Password: ')
@@ -94,29 +94,29 @@ def main():
         en_passwd = getpass.getpass(prompt='Enable Secret: ')
 
     if group is None:
-        group = raw_input('Enter your SNMP group: ')
+        group = input('Enter your SNMP group: ')
 
     if snmpuser is None:
-        snmpuser = raw_input('Enter your SNMP user: ')
+        snmpuser = input('Enter your SNMP user: ')
 
     if snmphost is None:
-        snmphost = raw_input('Enter your SNMP server address: ')
+        snmphost = input('Enter your SNMP server address: ')
 
     if snmpcontact is None:
-        snmpcontact = raw_input('Who is your SNMP contact info: ')
+        snmpcontact = input('Who is your SNMP contact info: ')
 
     if intname is None:
-        intname = raw_input('If an ASA is being configured, enter the interface the it will use to connect to the SNMP'
-                            ' server: ')
+        intname = input('If an ASA is being configured, enter the interface that it will use to connect to the SNMP'
+                        ' server: ')
 
     if snmpauth is None:
-        snmpauth = raw_input('Enter the SNMP user auth string: ')
+        snmpauth = input('Enter the SNMP user auth string: ')
 
     if snmppriv is None:
-        snmppriv = raw_input('Enter the SNMP priv string: ')
+        snmppriv = input('Enter the SNMP priv string: ')
 
     if snmpencrypt is None:
-        snmpencrypt = raw_input('Enter the type of encryption | des, 3des, or aes(128/192/256): ')
+        snmpencrypt = input('Enter the type of encryption | des, 3des, or aes(128/192/256): ')
 
     if hosts:
         for line in hosts:
@@ -128,7 +128,7 @@ def main():
                 what_os = child.expect([pexpect.TIMEOUT, '.IOS.', '.Adaptive.'])
 
                 if what_os == 0:
-                    print 'show ver' + ' time out' + 'for ' + host
+                    print('show ver' + ' time out' + 'for ' + host)
                     return
 
                 if what_os == 1:  # if it's an IOS device
@@ -143,9 +143,10 @@ def main():
                                  PRIVCMD + snmpencrypt + ' ' + snmppriv)
                     send_command(child, SNMPSRVHOSTCMD + ' ' + snmphost + VERSION3CMD + PRIVCMD + snmpuser)
                     send_command(child, SNMPSRVCONTACTCMD + snmpcontact)
-                    send_command(child, SNMPSRVENTRAPCMD)
+                    send_command(child, IOS_SNMPSRVENTRAPCMD)
                     send_command(child, ENDCMD)
                     send_command(child, WRME)
+                    print('SNMPv3 has been configured on ' + host)
                     child.close()
 
                 if what_os == 2:  # if it's an ASAOS device
@@ -160,8 +161,9 @@ def main():
                                  PRIVCMD + snmpencrypt + ' ' + snmppriv)
                     send_command(child, SNMPSRVHOSTCMD + intname + ' ' + snmphost + VERSION3CMD + snmpuser)
                     send_command(child, SNMPSRVCONTACTCMD + snmpcontact)
-                    send_command(child, SNMPSRVENTRAPCMD)
+                    send_command(child, ASAOS_SNMPSRVENTRAPCMD)
                     send_command(child, WRME)
+                    print('SNMPv3 has been configured on ' + host)
                     child.close()
 
     elif host:
@@ -172,7 +174,7 @@ def main():
             what_os = child.expect([pexpect.TIMEOUT, '.IOS.', '.Adaptive.'])
 
             if what_os == 0:
-                print 'show ver' + ' time out' + 'for ' + host
+                print('show ver' + ' time out' + 'for ' + host)
                 return
 
             if what_os == 1:  # if it's an IOS device
@@ -187,7 +189,7 @@ def main():
                              PRIVCMD + snmpencrypt + ' ' + snmppriv)
                 send_command(child, SNMPSRVHOSTCMD + ' ' + snmphost + VERSION3CMD + PRIVCMD + snmpuser)
                 send_command(child, SNMPSRVCONTACTCMD + snmpcontact)
-                send_command(child, SNMPSRVENTRAPCMD)
+                send_command(child, IOS_SNMPSRVENTRAPCMD)
                 send_command(child, ENDCMD)
                 send_command(child, WRME)
                 print('SNMPv3 has been configured on ' + host)
@@ -205,7 +207,7 @@ def main():
                             PRIVCMD + snmpencrypt + ' ' + snmppriv)
                 send_command(child, SNMPSRVHOSTCMD + intname + ' ' + snmphost + VERSION3CMD + snmpuser)
                 send_command(child, SNMPSRVCONTACTCMD + snmpcontact)
-                send_command(child, SNMPSRVENTRAPCMD)
+                send_command(child, ASAOS_SNMPSRVENTRAPCMD)
                 send_command(child, WRME)
                 print('SNMPv3 has been configured on ' + host)
                 child.close()

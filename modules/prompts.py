@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/local/bin/python3
 # -*- coding: utf-8 -*-
 """
-(C) Copyright [2014] Avery Rozar
+(C) Copyright [2014] InfoSec Consulting, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -38,6 +38,6 @@ limitations under the License.
 """
 __author__ = 'Avery Rozar'
 
-PROMPT = ['# ', '>']
-PRIV_EXEC_MODE = ['# ']
-USER_EXEC_MODE = ['>']
+PROMPT = ['.#', '.>']
+PRIV_EXEC_MODE = ['.#']
+USER_EXEC_MODE = ['.>']

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/python3
 # -*- coding: utf-8 -*-
 """
 (C) Copyright [2014] InfoSec Consulting, Inc.
