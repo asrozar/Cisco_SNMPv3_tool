@@ -13,6 +13,7 @@ You have a few options.
 To get help use the -h argument.
 
 python3 asaos-snmpv3-tool.py -h
+
 ===================================
 
 
@@ -21,6 +22,7 @@ python3 asaos-snmpv3-tool.py -h
 The minimum arguments are only --host or --host_file, you will be prompted for the other augments.
 
 python3 asaos-snmpv3-tool.py --host_file=asa.hosts
+
 ==================================================
 
 
@@ -41,6 +43,7 @@ python3 asaos-snmpv3-tool.py --host_file=asa.hosts \
                              --snmp_v3_priv='SNMP_PRIV' \
                              --snmp_v3_encr='aes 128'  \
                              --snmp_contact='Wile E. Coyote | wile.e.coyote@acme.com'
+
 =====================================================================================
 
 
@@ -58,4 +61,5 @@ python3 asaos-snmpv3-tool.py --host_file=asa.hosts \
                              --snmp_v3_priv='SNMP_PRIV' \
                              --snmp_v3_encr='aes 128' \
                              --snmp_contact='Wile E. Coyote | wile.e.coyote@acme.com'
+
 =====================================================================================
