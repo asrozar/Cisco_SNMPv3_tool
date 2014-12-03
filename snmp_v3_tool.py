@@ -36,16 +36,19 @@ limitations under the License.
         ::::::
           ::
 """
+
 __author__ = 'Avery Rozar'
 
 
 from modules.cisco_mode import *
 from modules.send_cmd import *
+from modules.cmds import *
 import getpass
 import argparse
 
 
 def main():
+    clear_screen()
     parser = argparse.ArgumentParser('--host --host_file --username --password --enable --group --snmp_user --snmp_host\
     --snmp_contact --int_name --snmp_v3_auth --snmp_v3_priv --snmp_v3_encr')
     parser.add_argument('--host', dest='host', type=str, help='specify a target host')
@@ -147,6 +150,8 @@ def main():
                     send_command(child, ENDCMD)
                     send_command(child, WRME)
                     print('SNMPv3 has been configured on ' + host)
+                    print('='*40)
+                    print('\n'*2)
                     child.close()
 
                 if what_os == 2:  # if it's an ASAOS device
@@ -164,6 +169,8 @@ def main():
                     send_command(child, ASAOS_SNMPSRVENTRAPCMD)
                     send_command(child, WRME)
                     print('SNMPv3 has been configured on ' + host)
+                    print('='*40)
+                    print('\n'*2)
                     child.close()
 
     elif host:
@@ -193,6 +200,8 @@ def main():
                 send_command(child, ENDCMD)
                 send_command(child, WRME)
                 print('SNMPv3 has been configured on ' + host)
+                print('='*40)
+                print('\n'*2)
                 child.close()
 
             if what_os == 2:  # if it's an ASAOS device
@@ -210,7 +219,13 @@ def main():
                 send_command(child, ASAOS_SNMPSRVENTRAPCMD)
                 send_command(child, WRME)
                 print('SNMPv3 has been configured on ' + host)
+                print('='*40)
+                print('\n'*2)
                 child.close()
+
+
+def clear_screen():
+    os.system('clear')
 
 if __name__ == '__main__':
     main()

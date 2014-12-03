@@ -50,7 +50,7 @@ except ImportError:
     os.system('pip3 install ptyprocess')
     import pexpect
 
-from modules.cmds import *
+import modules.cmds
 from modules.prompts import *
 
 
@@ -79,7 +79,7 @@ def config_mode(user, host, passwd, en_passwd):
                     print('enable password for ' + host + ' is incorrect')
                     return
                 if enable == 1:
-                    child.sendline(CONFT)
+                    child.sendline(modules.cmds.CONFT)
                     #child.expect(['.#'])
                     return child
     child.sendline(passwd)
@@ -95,11 +95,11 @@ def config_mode(user, host, passwd, en_passwd):
             print('enable password for ' + host + ' is incorrect')
             return
         if enable == 1:
-            child.sendline(CONFT)
+            child.sendline(modules.cmds.CONFT)
             #child.expect(['.#'])
             return child
     if auth == 2:
-        child.sendline(CONFT)
+        child.sendline(modules.cmds.CONFT)
         #child.expect(['.#'])
         return child
     else:
@@ -130,7 +130,7 @@ def enable_mode(user, host, passwd, en_passwd):
                 print('User password is incorrect')
                 return
             if auth == 2:
-                child.sendline(SHOWVER)
+                child.sendline(modules.cmds.SHOWVER)
                 # find out what Cisco OS we are working with
                 what_os = child.expect([pexpect.TIMEOUT, '.IOS.', '.Adaptive.'])
                 if what_os == 0:
@@ -152,7 +152,7 @@ def enable_mode(user, host, passwd, en_passwd):
                         return child
 
                 if what_os == 2:  # if it's an ASAOS device
-                    child.sendline(QOUTMORE)
+                    child.sendline(modules.cmds.QOUTMORE)
                     child.expect(PRIV_EXEC_MODE)
                     enable = child.expect([pexpect.TIMEOUT, 'Invalid password', '.#'])
                     if enable == 0:

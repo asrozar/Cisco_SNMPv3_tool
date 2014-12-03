@@ -44,4 +44,4 @@ from modules.prompts import *
 def send_command(child, cmd):
     child.sendline(cmd)
     child.expect(PROMPT)
-    print(child.before)
+    #print(child.before)
