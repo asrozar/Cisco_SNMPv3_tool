@@ -1,44 +1,10 @@
 #!/usr/local/bin/python3
 # -*- coding: utf-8 -*-
-"""
-(C) Copyright [2014] InfoSec Consulting, Inc.
+# (C) Copyright [2014] Avery Rozar
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-         ...
-    .:::|#:#|::::.
- .:::::|##|##|::::::.
- .::::|##|:|##|:::::.
-  ::::|#|:::|#|:::::
-  ::::|#|:::|#|:::::
-  ::::|##|:|##|:::::
-  ::::.|#|:|#|.:::::
-  ::|####|::|####|::
-  :|###|:|##|:|###|:
-  |###|::|##|::|###|
-  |#|::|##||##|::|#|
-  |#|:|##|::|##|:|#|
-  |#|##|::::::|##|#|
-   |#|::::::::::|#|
-    ::::::::::::::
-      ::::::::::
-       ::::::::
-        ::::::
-          ::
-"""
 __author__ = 'Avery Rozar'
 
-import os
+from os import system
 
 # if you get an error importing pexpect, install it using pip.
 try:
@@ -46,12 +12,12 @@ try:
 
 except ImportError:
     print('Installing pexpect..')
-    os.system('pip3 install pexpect')
-    os.system('pip3 install ptyprocess')
+    system('pip3 install pexpect')
+    system('pip3 install ptyprocess')
     import pexpect
 
-import modules.cmds
-from modules.prompts import *
+import lib.cmds
+from lib.prompts import *
 
 
 def config_mode(user, host, passwd, en_passwd):
@@ -79,7 +45,7 @@ def config_mode(user, host, passwd, en_passwd):
                     print('enable password for ' + host + ' is incorrect')
                     return
                 if enable == 1:
-                    child.sendline(modules.cmds.CONFT)
+                    child.sendline(lib.cmds.CONFT)
                     #child.expect(['.#'])
                     return child
     child.sendline(passwd)
@@ -95,11 +61,11 @@ def config_mode(user, host, passwd, en_passwd):
             print('enable password for ' + host + ' is incorrect')
             return
         if enable == 1:
-            child.sendline(modules.cmds.CONFT)
+            child.sendline(lib.cmds.CONFT)
             #child.expect(['.#'])
             return child
     if auth == 2:
-        child.sendline(modules.cmds.CONFT)
+        child.sendline(lib.cmds.CONFT)
         #child.expect(['.#'])
         return child
     else:
@@ -130,7 +96,7 @@ def enable_mode(user, host, passwd, en_passwd):
                 print('User password is incorrect')
                 return
             if auth == 2:
-                child.sendline(modules.cmds.SHOWVER)
+                child.sendline(lib.cmds.SHOWVER)
                 # find out what Cisco OS we are working with
                 what_os = child.expect([pexpect.TIMEOUT, '.IOS.', '.Adaptive.'])
                 if what_os == 0:
@@ -152,7 +118,7 @@ def enable_mode(user, host, passwd, en_passwd):
                         return child
 
                 if what_os == 2:  # if it's an ASAOS device
-                    child.sendline(modules.cmds.QOUTMORE)
+                    child.sendline(lib.cmds.QOUTMORE)
                     child.expect(PRIV_EXEC_MODE)
                     enable = child.expect([pexpect.TIMEOUT, 'Invalid password', '.#'])
                     if enable == 0:

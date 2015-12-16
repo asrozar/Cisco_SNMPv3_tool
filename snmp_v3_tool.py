@@ -1,58 +1,24 @@
 #!/usr/local/bin/python3
 # -*- coding: utf-8 -*-
-"""
-(C) Copyright [2014] InfoSec Consulting, Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-         ...
-    .:::|#:#|::::.
- .:::::|##|##|::::::.
- .::::|##|:|##|:::::.
-  ::::|#|:::|#|:::::
-  ::::|#|:::|#|:::::
-  ::::|##|:|##|:::::
-  ::::.|#|:|#|.:::::
-  ::|####|::|####|::
-  :|###|:|##|:|###|:
-  |###|::|##|::|###|
-  |#|::|##||##|::|#|
-  |#|:|##|::|##|:|#|
-  |#|##|::::::|##|#|
-   |#|::::::::::|#|
-    ::::::::::::::
-      ::::::::::
-       ::::::::
-        ::::::
-          ::
-"""
+# (C) Copyright [2014] Avery Rozar
 
 __author__ = 'Avery Rozar'
 
 
-from modules.cisco_mode import *
-from modules.send_cmd import *
-from modules.cmds import *
-import getpass
-import argparse
+from lib.cisco_mode import *
+from lib.send_cmd import *
+from lib.cmds import *
+from getpass import getpass
+from argparse import ArgumentParser, FileType
+from os import system
 
 
 def main():
     clear_screen()
-    parser = argparse.ArgumentParser('--host --host_file --username --password --enable --group --snmp_user --snmp_host\
+    parser = ArgumentParser('--host --host_file --username --password --enable --group --snmp_user --snmp_host\
     --snmp_contact --int_name --snmp_v3_auth --snmp_v3_priv --snmp_v3_encr')
     parser.add_argument('--host', dest='host', type=str, help='specify a target host')
-    parser.add_argument('--host_file', dest='hosts', type=argparse.FileType('r'), help='specify a target host file')
+    parser.add_argument('--host_file', dest='hosts', type=FileType('r'), help='specify a target host file')
     parser.add_argument('--username', dest='user', type=str, help='specify a user name')
     parser.add_argument('--password', dest='passwd', type=str, help='specify a passwd')
     parser.add_argument('--enable', dest='en_passwd', type=str, help='specify an enable passwd')
@@ -91,10 +57,10 @@ def main():
         user = input('Enter your username: ')
 
     if passwd is None:
-        passwd = getpass.getpass(prompt='User Password: ')
+        passwd = getpass(prompt='User Password: ')
 
     if en_passwd is None:
-        en_passwd = getpass.getpass(prompt='Enable Secret: ')
+        en_passwd = getpass(prompt='Enable Secret: ')
 
     if group is None:
         group = input('Enter your SNMP group: ')
@@ -191,7 +157,7 @@ def main():
                 child.expect(PRIV_EXEC_MODE)
                 child.sendline(CONFT)
                 child.expect(PRIV_EXEC_MODE)
-                (child, SNMPGROUPCMD + group + V3PRIVCMD)
+                send_command(child, SNMPGROUPCMD + group + V3PRIVCMD)
                 send_command(child, SNMPSRVUSRCMD + snmpuser + ' ' + group + V3AUTHCMD + SHAHMACCMD + snmpauth +
                              PRIVCMD + snmpencrypt + ' ' + snmppriv)
                 send_command(child, SNMPSRVHOSTCMD + ' ' + snmphost + VERSION3CMD + PRIVCMD + snmpuser)
@@ -225,7 +191,12 @@ def main():
 
 
 def clear_screen():
-    os.system('clear')
+    system('clear')
 
 if __name__ == '__main__':
+  try:
     main()
+  except (IOError, SystemExit):
+    raise
+  except KeyboardInterrupt:
+    print('Crtl+C Pressed. Shutting down.')
