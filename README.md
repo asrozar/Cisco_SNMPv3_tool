@@ -43,7 +43,7 @@ Use all arguments at once (Less secure, passwords will be loaded on the screen).
 =====================================================================================
 
 
-Use most arguments, you will be prompted for the other augments.
+Use most arguments, you will be prompted for the other arguments.
 
      python3 snmp_v3_tool.py --host_file=asa.hosts
                              --username=USERNAME
